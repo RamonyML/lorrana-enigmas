@@ -242,24 +242,32 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
 
   // Prevenir zoom e outros gestos indesejados em mobile
   useEffect(() => {
-    const preventDefault = (e: TouchEvent) => {
-      if (e.touches.length > 1) {
-        e.preventDefault();
-      }
-    };
-
     const preventZoom = (e: TouchEvent) => {
+      // Apenas previne gestos de multi-touch (zoom, pinch)
       if (e.touches.length > 1) {
         e.preventDefault();
       }
     };
 
-    document.addEventListener('touchstart', preventDefault, { passive: false });
+    const preventScrollOnGameArea = (e: TouchEvent) => {
+      // Previne scroll apenas se o toque for na área do jogo
+      const target = e.target as Element;
+      if (target.closest('.game-board') || target.closest('.mobile-controls')) {
+        // Permite toques únicos nos botões, mas previne scroll
+        if (e.touches.length === 1 && target.closest('.mobile-controls')) {
+          return; // Não previne toques nos botões de controle
+        }
+        e.preventDefault();
+      }
+    };
+
+    // Usar touchmove para prevenir scroll, não touchstart
     document.addEventListener('touchmove', preventZoom, { passive: false });
+    document.addEventListener('touchmove', preventScrollOnGameArea, { passive: false });
 
     return () => {
-      document.removeEventListener('touchstart', preventDefault);
       document.removeEventListener('touchmove', preventZoom);
+      document.removeEventListener('touchmove', preventScrollOnGameArea);
     };
   }, []);
 
@@ -323,8 +331,9 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
             }}
             onTouchStart={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               console.log('UP touchstart');
-              if (!gameOver && !isPaused) {
+              if (!gameOver && !isPaused && direction !== 'DOWN') {
                 setDirection('UP');
               }
             }}
@@ -346,6 +355,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
             }}
             onTouchStart={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               console.log('LEFT touchstart');
               if (!gameOver && !isPaused && direction !== 'RIGHT') {
                 setDirection('LEFT');
@@ -368,6 +378,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
             }}
             onTouchStart={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               console.log('RIGHT touchstart');
               if (!gameOver && !isPaused && direction !== 'LEFT') {
                 setDirection('RIGHT');
@@ -391,6 +402,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
             }}
             onTouchStart={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               console.log('DOWN touchstart');
               if (!gameOver && !isPaused && direction !== 'UP') {
                 setDirection('DOWN');
