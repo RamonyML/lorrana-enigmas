@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 // import './SnakeGame.css'; // CSS removido - arquivo não existe
 
@@ -13,6 +13,16 @@ interface SnakeGameProps {
 }
 
 const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
+  console.log('🎮 SnakeGame component rendering');
+  
+  // Refs para os botões de controle mobile
+  const upButtonRef = useRef<HTMLButtonElement>(null);
+  const downButtonRef = useRef<HTMLButtonElement>(null);
+  const leftButtonRef = useRef<HTMLButtonElement>(null);
+  const rightButtonRef = useRef<HTMLButtonElement>(null);
+  const testRedRef = useRef<HTMLButtonElement>(null);
+  const testGreenRef = useRef<HTMLButtonElement>(null);
+
   const [snake, setSnake] = useState<Position[]>([{ x: 10, y: 10 }]);
   const [food, setFood] = useState<Position>({ x: 15, y: 15 });
   const [direction, setDirection] = useState<string>('RIGHT');
@@ -271,6 +281,115 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
     };
   }, []);
 
+  // Event listeners nativos para mobile
+  useEffect(() => {
+    console.log('🔧 Configurando event listeners nativos para mobile');
+
+    const handleButtonPress = (direction: string, buttonName: string) => {
+      console.log(`📱 MOBILE: ${buttonName} pressionado!`);
+      alert(`MOBILE: ${buttonName} funcionou! Direction: ${direction}`);
+      
+      if (!gameOver && !isPaused) {
+        const opposites = { UP: 'DOWN', DOWN: 'UP', LEFT: 'RIGHT', RIGHT: 'LEFT' };
+        if (opposites[direction as keyof typeof opposites] !== direction) {
+          console.log(`📱 MOBILE: Mudando direção para ${direction}`);
+          setDirection(direction);
+        }
+      }
+    };
+
+    const handleTestButton = (color: string) => {
+      console.log(`📱 MOBILE: Botão ${color} funcionou!`);
+      alert(`MOBILE: Botão ${color} funcionou perfeitamente!`);
+    };
+
+    // Configurar listeners para cada botão
+    const buttons = [
+      { ref: upButtonRef, direction: 'UP', name: 'UP' },
+      { ref: downButtonRef, direction: 'DOWN', name: 'DOWN' },
+      { ref: leftButtonRef, direction: 'LEFT', name: 'LEFT' },
+      { ref: rightButtonRef, direction: 'RIGHT', name: 'RIGHT' }
+    ];
+
+    const eventListeners: Array<() => void> = [];
+
+    buttons.forEach(({ ref, direction, name }) => {
+      if (ref.current) {
+        const touchHandler = (e: TouchEvent) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleButtonPress(direction, name);
+        };
+
+        const clickHandler = (e: MouseEvent) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleButtonPress(direction, name);
+        };
+
+        ref.current.addEventListener('touchstart', touchHandler, { passive: false });
+        ref.current.addEventListener('click', clickHandler);
+        
+        eventListeners.push(() => {
+          if (ref.current) {
+            ref.current.removeEventListener('touchstart', touchHandler);
+            ref.current.removeEventListener('click', clickHandler);
+          }
+        });
+      }
+    });
+
+    // Botões de teste
+    if (testRedRef.current) {
+      const redTouchHandler = (e: TouchEvent) => {
+        e.preventDefault();
+        handleTestButton('VERMELHO');
+        setDirection('UP');
+      };
+      const redClickHandler = (e: MouseEvent) => {
+        e.preventDefault();
+        handleTestButton('VERMELHO');
+        setDirection('UP');
+      };
+      testRedRef.current.addEventListener('touchstart', redTouchHandler, { passive: false });
+      testRedRef.current.addEventListener('click', redClickHandler);
+      
+      eventListeners.push(() => {
+        if (testRedRef.current) {
+          testRedRef.current.removeEventListener('touchstart', redTouchHandler);
+          testRedRef.current.removeEventListener('click', redClickHandler);
+        }
+      });
+    }
+
+    if (testGreenRef.current) {
+      const greenTouchHandler = (e: TouchEvent) => {
+        e.preventDefault();
+        handleTestButton('VERDE');
+      };
+      const greenClickHandler = (e: MouseEvent) => {
+        e.preventDefault();
+        handleTestButton('VERDE');
+      };
+      testGreenRef.current.addEventListener('touchstart', greenTouchHandler, { passive: false });
+      testGreenRef.current.addEventListener('click', greenClickHandler);
+      
+      eventListeners.push(() => {
+        if (testGreenRef.current) {
+          testGreenRef.current.removeEventListener('touchstart', greenTouchHandler);
+          testGreenRef.current.removeEventListener('click', greenClickHandler);
+        }
+      });
+    }
+
+    console.log(`🔧 Configurados ${eventListeners.length} event listeners`);
+
+    return () => {
+      console.log('🧹 Removendo event listeners');
+      eventListeners.forEach(cleanup => cleanup());
+    };
+  }, [gameOver, isPaused]);
+
   return (
     <div style={{
       background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
@@ -312,17 +431,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
           Debug: Direction: {direction} | Game Over: {gameOver.toString()} | Paused: {isPaused.toString()}
         </div>
         <button 
-          onClick={() => {
-            console.log('🔴 TESTE: Botão vermelho clicado!');
-            alert('Botão vermelho funcionou!');
-            console.log('🔴 TESTE: Tentando mudar direção para UP');
-            setDirection('UP');
-            console.log('🔴 TESTE: setDirection chamado');
-          }}
-          onTouchStart={() => {
-            console.log('🔴 TESTE: Touch no botão vermelho!');
-            alert('Touch no botão vermelho funcionou!');
-          }}
+          ref={testRedRef}
           style={{ 
             marginTop: '10px', 
             padding: '10px 15px', 
@@ -334,13 +443,10 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
             cursor: 'pointer'
           }}
         >
-          🔴 TESTE BÁSICO
+          🔴 TESTE BÁSICO (REF)
         </button>
         <button 
-          onClick={() => {
-            console.log('🟢 TESTE: Botão verde clicado!');
-            alert('Clique funcionou! Direction atual: ' + direction);
-          }}
+          ref={testGreenRef}
           style={{ 
             marginTop: '5px', 
             padding: '10px 15px', 
@@ -352,7 +458,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
             cursor: 'pointer'
           }}
         >
-          🟢 TESTE ALERT
+          🟢 TESTE ALERT (REF)
         </button>
       </div>
 
@@ -402,13 +508,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
         <h3 style={{ color: '#FFD700', marginBottom: '15px' }}>CONTROLES DE TESTE</h3>
         <div style={{ margin: '10px 0' }}>
           <button
-            onClick={() => {
-              console.log('🔵 UP CLICADO!');
-              alert('UP clicado! Direction: ' + direction);
-              if (!gameOver && !isPaused && direction !== 'DOWN') {
-                setDirection('UP');
-              }
-            }}
+            ref={upButtonRef}
             style={{
               display: 'block',
               margin: '5px auto',
@@ -423,18 +523,12 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
               minWidth: '120px'
             }}
           >
-            ⬆️ UP
+            ⬆️ UP (REF)
           </button>
         </div>
         <div style={{ margin: '10px 0' }}>
           <button
-            onClick={() => {
-              console.log('🟡 LEFT CLICADO!');
-              alert('LEFT clicado! Direction: ' + direction);
-              if (!gameOver && !isPaused && direction !== 'RIGHT') {
-                setDirection('LEFT');
-              }
-            }}
+            ref={leftButtonRef}
             style={{
               padding: '15px 20px',
               backgroundColor: '#ffaa00',
@@ -448,16 +542,10 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
               minWidth: '100px'
             }}
           >
-            ⬅️ LEFT
+            ⬅️ LEFT (REF)
           </button>
           <button
-            onClick={() => {
-              console.log('🟢 RIGHT CLICADO!');
-              alert('RIGHT clicado! Direction: ' + direction);
-              if (!gameOver && !isPaused && direction !== 'LEFT') {
-                setDirection('RIGHT');
-              }
-            }}
+            ref={rightButtonRef}
             style={{
               padding: '15px 20px',
               backgroundColor: '#00aa00',
@@ -471,18 +559,12 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
               minWidth: '100px'
             }}
           >
-            ➡️ RIGHT
+            ➡️ RIGHT (REF)
           </button>
         </div>
         <div style={{ margin: '10px 0' }}>
           <button
-            onClick={() => {
-              console.log('🟣 DOWN CLICADO!');
-              alert('DOWN clicado! Direction: ' + direction);
-              if (!gameOver && !isPaused && direction !== 'UP') {
-                setDirection('DOWN');
-              }
-            }}
+            ref={downButtonRef}
             style={{
               display: 'block',
               margin: '5px auto',
@@ -497,7 +579,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
               minWidth: '120px'
             }}
           >
-            ⬇️ DOWN
+            ⬇️ DOWN (REF)
           </button>
         </div>
       </div>
