@@ -1,46 +1,71 @@
-# Getting Started with Create React App
+# 🎉 Jogo de Enigmas da Lorrana 🎉
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Um jogo de enigmas criativo e desafiador criado especialmente para o aniversário da Lorrana!
 
-## Available Scripts
+## 🎮 Sobre o Jogo
 
-In the project directory, you can run:
+Este é um jogo de enigmas interativo com:
+- **10 enigmas desafiadores** com diferentes tipos de perguntas
+- **Tema escuro** com design moderno e animações
+- **Sistema de dicas** para ajudar quando necessário
+- **Cronômetro** para acompanhar o tempo
+- **Barra de progresso** para mostrar o avanço
+- **Animações suaves** usando Framer Motion
 
-### `npm start`
+## 🚀 Como Jogar
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. **Inicie o jogo**: Execute `npm start` no terminal
+2. **Leia o enigma**: Cada enigma tem uma pergunta única
+3. **Digite sua resposta**: Use o campo de texto para responder
+4. **Use dicas se necessário**: Clique no botão "Dica" se precisar de ajuda
+5. **Avance**: Resposta correta leva ao próximo enigma
+6. **Complete**: Termine todos os 10 enigmas para vencer!
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 🛠️ Tecnologias Utilizadas
 
-### `npm test`
+- **React 18** com TypeScript
+- **Framer Motion** para animações
+- **Lucide React** para ícones
+- **CSS3** com gradientes e efeitos modernos
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 📦 Instalação e Execução
 
-### `npm run build`
+```bash
+# Instalar dependências
+npm install
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Executar em modo de desenvolvimento
+npm start
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Build para produção
+npm run build
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🎯 Enigmas Incluídos
 
-### `npm run eject`
+1. **O Portal Misterioso** - Adivinhação sobre lugares
+2. **A Mensagem Cifrada** - Criptografia de letras
+3. **O Enigma Matemático** - Cálculos simples
+4. **A Palavra Escondida** - Manipulação de palavras
+5. **O Código das Cores** - Códigos numéricos
+6. **O Enigma do Tempo** - Cálculos de datas
+7. **A Sequência Mágica** - Padrões matemáticos
+8. **O Enigma das Letras** - Soma de valores alfabéticos
+9. **A Última Desafio** - Multiplicação
+10. **O Final Feliz** - Palavra especial
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## 🎨 Características do Design
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **Tema escuro** com gradientes coloridos
+- **Efeitos de vidro** (glassmorphism)
+- **Animações suaves** e responsivas
+- **Design mobile-friendly**
+- **Ícones temáticos** para cada enigma
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 💝 Feito com Amor
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Este jogo foi criado especialmente para celebrar o aniversário da Lorrana, com muito carinho e criatividade! 🎂✨
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+**Feliz Aniversário, Lorrana!** 🎉💖
