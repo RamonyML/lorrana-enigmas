@@ -130,7 +130,12 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
   }, [direction, food, gameOver, isPaused, generateFood, checkCollision, desmotivationalMessages]);
 
   const handleDirectionChange = useCallback((newDirection: string) => {
-    if (gameOver || isPaused) return;
+    console.log('handleDirectionChange called:', newDirection, 'Current direction:', direction, 'Game Over:', gameOver, 'Paused:', isPaused);
+    
+    if (gameOver || isPaused) {
+      console.log('Direction change blocked - game state invalid');
+      return;
+    }
 
     const opposites = {
       'UP': 'DOWN',
@@ -140,15 +145,29 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
     };
 
     if (opposites[newDirection as keyof typeof opposites] !== direction) {
+      console.log('Setting new direction:', newDirection);
       setDirection(newDirection);
       triggerHapticFeedback(); // Feedback haptic quando muda direção
+    } else {
+      console.log('Direction change ignored - opposite direction');
     }
   }, [direction, gameOver, isPaused, triggerHapticFeedback]);
 
   // Função para lidar com eventos touch
   const handleTouchControl = useCallback((newDirection: string, event: React.TouchEvent | React.MouseEvent) => {
-    event.preventDefault();
+    console.log('Touch control triggered:', newDirection, 'Event type:', event.type, 'Game Over:', gameOver, 'Paused:', isPaused);
+    
+    // Previne comportamento padrão apenas para eventos touch
+    if (event.type.startsWith('touch')) {
+      event.preventDefault();
+    }
     event.stopPropagation();
+    
+    // Verifica se o jogo está em estado válido para aceitar comandos
+    if (gameOver || isPaused) {
+      console.log('Touch control blocked - game state invalid');
+      return;
+    }
     
     // Adiciona classe de feedback visual temporário
     const target = event.currentTarget as HTMLButtonElement;
@@ -157,8 +176,22 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
       target.classList.remove('button-pressed');
     }, 150);
     
-    handleDirectionChange(newDirection);
-  }, [handleDirectionChange]);
+    console.log('Calling handleDirectionChange with:', newDirection);
+    
+    // Chama diretamente setDirection para garantir que funcione
+    const opposites = {
+      'UP': 'DOWN',
+      'DOWN': 'UP',
+      'LEFT': 'RIGHT',
+      'RIGHT': 'LEFT'
+    };
+
+    if (opposites[newDirection as keyof typeof opposites] !== direction) {
+      console.log('Setting direction directly:', newDirection);
+      setDirection(newDirection);
+      triggerHapticFeedback();
+    }
+  }, [direction, gameOver, isPaused, triggerHapticFeedback]);
 
   const handleContinueToNext = () => {
     onComplete();
@@ -236,6 +269,26 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
         <h2>🐍 Snake Game - Desafio da Cobra 🐍</h2>
         <p>Colete as maçãs para ganhar pontos!</p>
         <div className="score">Pontuação: {score}</div>
+        {/* Debug info */}
+        <div style={{ fontSize: '12px', marginTop: '10px', color: '#ccc' }}>
+          Debug: Direction: {direction} | Game Over: {gameOver.toString()} | Paused: {isPaused.toString()}
+        </div>
+        <button 
+          onClick={() => {
+            console.log('Test button clicked');
+            setDirection('UP');
+          }}
+          style={{ 
+            marginTop: '10px', 
+            padding: '5px 10px', 
+            backgroundColor: '#ff0000',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px'
+          }}
+        >
+          Test Direction Change
+        </button>
       </div>
 
       <div className="game-board">
@@ -262,8 +315,19 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
         <div className="control-row">
           <button
             className="control-button"
-            onClick={(e) => handleTouchControl('UP', e)}
-            onTouchStart={(e) => handleTouchControl('UP', e)}
+            onClick={() => {
+              console.log('UP button clicked directly');
+              if (!gameOver && !isPaused) {
+                setDirection('UP');
+              }
+            }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              console.log('UP touchstart');
+              if (!gameOver && !isPaused) {
+                setDirection('UP');
+              }
+            }}
             disabled={gameOver || isPaused}
             type="button"
             aria-label="Mover para cima"
@@ -274,8 +338,19 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
         <div className="control-row">
           <button
             className="control-button"
-            onClick={(e) => handleTouchControl('LEFT', e)}
-            onTouchStart={(e) => handleTouchControl('LEFT', e)}
+            onClick={() => {
+              console.log('LEFT button clicked directly');
+              if (!gameOver && !isPaused && direction !== 'RIGHT') {
+                setDirection('LEFT');
+              }
+            }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              console.log('LEFT touchstart');
+              if (!gameOver && !isPaused && direction !== 'RIGHT') {
+                setDirection('LEFT');
+              }
+            }}
             disabled={gameOver || isPaused}
             type="button"
             aria-label="Mover para esquerda"
@@ -285,8 +360,19 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
           <div className="center-space"></div>
           <button
             className="control-button"
-            onClick={(e) => handleTouchControl('RIGHT', e)}
-            onTouchStart={(e) => handleTouchControl('RIGHT', e)}
+            onClick={() => {
+              console.log('RIGHT button clicked directly');
+              if (!gameOver && !isPaused && direction !== 'LEFT') {
+                setDirection('RIGHT');
+              }
+            }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              console.log('RIGHT touchstart');
+              if (!gameOver && !isPaused && direction !== 'LEFT') {
+                setDirection('RIGHT');
+              }
+            }}
             disabled={gameOver || isPaused}
             type="button"
             aria-label="Mover para direita"
@@ -297,8 +383,19 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
         <div className="control-row">
           <button
             className="control-button"
-            onClick={(e) => handleTouchControl('DOWN', e)}
-            onTouchStart={(e) => handleTouchControl('DOWN', e)}
+            onClick={() => {
+              console.log('DOWN button clicked directly');
+              if (!gameOver && !isPaused && direction !== 'UP') {
+                setDirection('DOWN');
+              }
+            }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              console.log('DOWN touchstart');
+              if (!gameOver && !isPaused && direction !== 'UP') {
+                setDirection('DOWN');
+              }
+            }}
             disabled={gameOver || isPaused}
             type="button"
             aria-label="Mover para baixo"
