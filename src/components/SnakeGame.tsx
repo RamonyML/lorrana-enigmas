@@ -283,19 +283,46 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
         </div>
         <button 
           onClick={() => {
-            console.log('Test button clicked');
+            console.log('🔴 TESTE: Botão vermelho clicado!');
+            alert('Botão vermelho funcionou!');
+            console.log('🔴 TESTE: Tentando mudar direção para UP');
             setDirection('UP');
+            console.log('🔴 TESTE: setDirection chamado');
+          }}
+          onTouchStart={() => {
+            console.log('🔴 TESTE: Touch no botão vermelho!');
+            alert('Touch no botão vermelho funcionou!');
           }}
           style={{ 
             marginTop: '10px', 
-            padding: '5px 10px', 
+            padding: '10px 15px', 
             backgroundColor: '#ff0000',
             color: 'white',
             border: 'none',
-            borderRadius: '5px'
+            borderRadius: '5px',
+            fontSize: '14px',
+            cursor: 'pointer'
           }}
         >
-          Test Direction Change
+          🔴 TESTE BÁSICO
+        </button>
+        <button 
+          onClick={() => {
+            console.log('🟢 TESTE: Botão verde clicado!');
+            alert('Clique funcionou! Direction atual: ' + direction);
+          }}
+          style={{ 
+            marginTop: '5px', 
+            padding: '10px 15px', 
+            backgroundColor: '#00ff00',
+            color: 'black',
+            border: 'none',
+            borderRadius: '5px',
+            fontSize: '14px',
+            cursor: 'pointer'
+          }}
+        >
+          🟢 TESTE ALERT
         </button>
       </div>
 
