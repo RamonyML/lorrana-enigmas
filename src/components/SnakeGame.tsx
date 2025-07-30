@@ -390,6 +390,50 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
     };
   }, [gameOver, isPaused]);
 
+  // Garantir que clique direito funcione - remover qualquer bloqueio
+  useEffect(() => {
+    console.log('🔓 Removendo bloqueios de clique direito');
+    
+    // Remover qualquer bloqueio de contextmenu existente
+    const enableRightClick = (e: Event) => {
+      e.stopPropagation();
+      return true;
+    };
+
+    // Garantir que contextmenu funcione
+    document.oncontextmenu = null;
+    window.oncontextmenu = null;
+    
+    // Remover qualquer listener que possa estar bloqueando
+    document.addEventListener('contextmenu', enableRightClick);
+    
+    // Garantir que não há CSS bloqueando
+    const style = document.createElement('style');
+    style.textContent = `
+      * {
+        -webkit-user-select: text !important;
+        -moz-user-select: text !important;
+        -ms-user-select: text !important;
+        user-select: text !important;
+        pointer-events: auto !important;
+      }
+      body {
+        -webkit-user-select: text !important;
+        -moz-user-select: text !important;
+        -ms-user-select: text !important;
+        user-select: text !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    console.log('✅ Clique direito habilitado');
+
+    return () => {
+      document.removeEventListener('contextmenu', enableRightClick);
+      document.head.removeChild(style);
+    };
+  }, []);
+
   return (
     <div style={{
       background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
