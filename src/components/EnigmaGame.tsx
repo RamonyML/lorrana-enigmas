@@ -17,7 +17,8 @@ const EnigmaGame: React.FC = () => {
     startTime: new Date()
   });
 
-  const [showSnakeGame, setShowSnakeGame] = useState(false);
+  // Snake Game temporariamente desabilitado
+  // const [showSnakeGame, setShowSnakeGame] = useState(false);
 
   const currentEnigma = enigmas.find(e => e.id === gameState.currentEnigmaId);
 
@@ -35,9 +36,15 @@ const EnigmaGame: React.FC = () => {
 
     if (isCorrect) {
       setTimeout(() => {
-        // Se for o enigma 5, mostrar o jogo Snake
+        // Pula o jogo Snake - vai direto do enigma 5 para o 6
         if (currentEnigma.id === 5) {
-          setShowSnakeGame(true);
+          setGameState(prev => ({
+            ...prev,
+            currentEnigmaId: 6, // Pula direto para o enigma 6
+            completedEnigmas: [...prev.completedEnigmas, currentEnigma.id],
+            userAnswer: '',
+            isCorrect: null
+          }));
         } else if (currentEnigma.isFinal) {
           setGameState(prev => ({
             ...prev,
@@ -66,6 +73,8 @@ const EnigmaGame: React.FC = () => {
     }
   };
 
+  // Funções do Snake Game temporariamente desabilitadas
+  /*
   const handleSnakeComplete = () => {
     setShowSnakeGame(false);
     setGameState(prev => ({
@@ -80,6 +89,7 @@ const EnigmaGame: React.FC = () => {
   const handleSnakeClose = () => {
     setShowSnakeGame(false);
   };
+  */
 
   const resetGame = () => {
     setGameState({
@@ -91,7 +101,7 @@ const EnigmaGame: React.FC = () => {
       gameCompleted: false,
       startTime: new Date()
     });
-    setShowSnakeGame(false);
+    // setShowSnakeGame(false); // Snake Game desabilitado
   };
 
   const getTimeElapsed = () => {
@@ -102,6 +112,8 @@ const EnigmaGame: React.FC = () => {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  // Snake Game temporariamente desabilitado
+  /*
   if (showSnakeGame) {
     return (
       <div className="enigma-game" style={{ 
@@ -115,6 +127,7 @@ const EnigmaGame: React.FC = () => {
       </div>
     );
   }
+  */
 
   if (gameState.gameCompleted) {
     return (
