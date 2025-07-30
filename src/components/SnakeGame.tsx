@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
-import './SnakeGame.css';
+// import './SnakeGame.css'; // CSS removido - arquivo não existe
 
 interface Position {
   x: number;
@@ -272,11 +272,41 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
   }, []);
 
   return (
-    <div className="snake-game-container">
-      <div className="snake-game-header">
+    <div style={{
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+      borderRadius: '20px',
+      padding: '30px',
+      maxWidth: '500px',
+      width: '100%',
+      border: '2px solid #FFD700',
+      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)',
+      color: 'white',
+      position: 'relative',
+      margin: '0 auto',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh'
+    }}>
+      <div style={{
+        textAlign: 'center',
+        marginBottom: '20px',
+        paddingBottom: '15px',
+        borderBottom: '2px solid rgba(255, 215, 0, 0.3)',
+        width: '100%'
+      }}>
         <h2>🐍 Snake Game - Desafio da Cobra 🐍</h2>
         <p>Colete as maçãs para ganhar pontos!</p>
-        <div className="score">Pontuação: {score}</div>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: '600',
+          color: '#FFD700',
+          background: 'rgba(255, 215, 0, 0.1)',
+          padding: '8px 16px',
+          borderRadius: '8px',
+          display: 'inline-block'
+        }}>Pontuação: {score}</div>
         {/* Debug info */}
         <div style={{ fontSize: '12px', marginTop: '10px', color: '#ccc' }}>
           Debug: Direction: {direction} | Game Over: {gameOver.toString()} | Paused: {isPaused.toString()}
@@ -326,18 +356,40 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
         </button>
       </div>
 
-      <div className="game-board">
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginBottom: '20px',
+        border: '2px solid #FFD700',
+        borderRadius: '10px',
+        overflow: 'hidden',
+        background: '#0a0a0a',
+        width: '300px',
+        height: '300px'
+      }}>
         {Array.from({ length: BOARD_SIZE }, (_, y) => (
-          <div key={y} className="row">
+          <div key={y} style={{ display: 'flex', height: '15px' }}>
             {Array.from({ length: BOARD_SIZE }, (_, x) => {
               const isSnake = snake.some(segment => segment.x === x && segment.y === y);
               const isFood = food.x === x && food.y === y;
               const isHead = snake[0]?.x === x && snake[0]?.y === y;
 
+              let bgColor = '#000';
+              if (isHead) bgColor = '#FFD700';
+              else if (isSnake) bgColor = '#4CAF50';
+              else if (isFood) bgColor = '#FF6B6B';
+
               return (
                 <div
                   key={`${x}-${y}`}
-                  className={`cell ${isSnake ? 'snake' : ''} ${isFood ? 'food' : ''} ${isHead ? 'head' : ''}`}
+                  style={{
+                    width: '15px',
+                    height: '15px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    background: bgColor,
+                    borderRadius: isFood ? '50%' : '2px'
+                  }}
                 />
               );
             })}
@@ -345,101 +397,107 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onComplete, onClose }) => {
         ))}
       </div>
 
-      {/* Mobile Controls */}
-      <div className="mobile-controls">
-        <div className="control-row">
+      {/* Mobile Controls - SUPER SIMPLIFICADO */}
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <h3 style={{ color: '#FFD700', marginBottom: '15px' }}>CONTROLES DE TESTE</h3>
+        <div style={{ margin: '10px 0' }}>
           <button
-            className="control-button"
             onClick={() => {
-              console.log('UP button clicked directly');
-              if (!gameOver && !isPaused) {
-                setDirection('UP');
-              }
-            }}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('UP touchstart');
+              console.log('🔵 UP CLICADO!');
+              alert('UP clicado! Direction: ' + direction);
               if (!gameOver && !isPaused && direction !== 'DOWN') {
                 setDirection('UP');
               }
             }}
-            disabled={gameOver || isPaused}
-            type="button"
-            aria-label="Mover para cima"
+            style={{
+              display: 'block',
+              margin: '5px auto',
+              padding: '15px 30px',
+              backgroundColor: '#0066ff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              fontSize: '16px',
+              cursor: 'pointer',
+              minHeight: '50px',
+              minWidth: '120px'
+            }}
           >
-            <ArrowUp size={24} />
+            ⬆️ UP
           </button>
         </div>
-        <div className="control-row">
+        <div style={{ margin: '10px 0' }}>
           <button
-            className="control-button"
             onClick={() => {
-              console.log('LEFT button clicked directly');
+              console.log('🟡 LEFT CLICADO!');
+              alert('LEFT clicado! Direction: ' + direction);
               if (!gameOver && !isPaused && direction !== 'RIGHT') {
                 setDirection('LEFT');
               }
             }}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('LEFT touchstart');
-              if (!gameOver && !isPaused && direction !== 'RIGHT') {
-                setDirection('LEFT');
-              }
+            style={{
+              padding: '15px 20px',
+              backgroundColor: '#ffaa00',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              fontSize: '16px',
+              cursor: 'pointer',
+              marginRight: '10px',
+              minHeight: '50px',
+              minWidth: '100px'
             }}
-            disabled={gameOver || isPaused}
-            type="button"
-            aria-label="Mover para esquerda"
           >
-            <ArrowLeft size={24} />
+            ⬅️ LEFT
           </button>
-          <div className="center-space"></div>
           <button
-            className="control-button"
             onClick={() => {
-              console.log('RIGHT button clicked directly');
+              console.log('🟢 RIGHT CLICADO!');
+              alert('RIGHT clicado! Direction: ' + direction);
               if (!gameOver && !isPaused && direction !== 'LEFT') {
                 setDirection('RIGHT');
               }
             }}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('RIGHT touchstart');
-              if (!gameOver && !isPaused && direction !== 'LEFT') {
-                setDirection('RIGHT');
-              }
+            style={{
+              padding: '15px 20px',
+              backgroundColor: '#00aa00',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              fontSize: '16px',
+              cursor: 'pointer',
+              marginLeft: '10px',
+              minHeight: '50px',
+              minWidth: '100px'
             }}
-            disabled={gameOver || isPaused}
-            type="button"
-            aria-label="Mover para direita"
           >
-            <ArrowRight size={24} />
+            ➡️ RIGHT
           </button>
         </div>
-        <div className="control-row">
+        <div style={{ margin: '10px 0' }}>
           <button
-            className="control-button"
             onClick={() => {
-              console.log('DOWN button clicked directly');
+              console.log('🟣 DOWN CLICADO!');
+              alert('DOWN clicado! Direction: ' + direction);
               if (!gameOver && !isPaused && direction !== 'UP') {
                 setDirection('DOWN');
               }
             }}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('DOWN touchstart');
-              if (!gameOver && !isPaused && direction !== 'UP') {
-                setDirection('DOWN');
-              }
+            style={{
+              display: 'block',
+              margin: '5px auto',
+              padding: '15px 30px',
+              backgroundColor: '#aa00aa',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              fontSize: '16px',
+              cursor: 'pointer',
+              minHeight: '50px',
+              minWidth: '120px'
             }}
-            disabled={gameOver || isPaused}
-            type="button"
-            aria-label="Mover para baixo"
           >
-            <ArrowDown size={24} />
+            ⬇️ DOWN
           </button>
         </div>
       </div>
