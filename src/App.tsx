@@ -4,13 +4,10 @@ import BackgroundAudio from './components/BackgroundAudio';
 import './App.css';
 
 function App() {
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    alert('Boa tentativa, Daniel. Não tem nada aqui kkkk');
-  };
+  // Bloqueio de clique direito removido conforme solicitado
 
   return (
-    <div className="App" onContextMenu={handleContextMenu}>
+    <div className="App">
       <BackgroundAudio />
       <EnigmaGame />
     </div>
